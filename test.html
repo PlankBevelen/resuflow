@@ -1,0 +1,505 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>ResuMaker - 专业简历制作</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <style>
+        /* 基础设置 */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .canvas-shadow { box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+        
+        /* 网格背景 */
+        #main-canvas {
+            background-image: 
+                linear-gradient(45deg, #f8fafc 25%, transparent 25%), 
+                linear-gradient(-45deg, #f8fafc 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #f8fafc 75%), 
+                linear-gradient(-45deg, transparent 75%, #f8fafc 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .canvas-element { cursor: move; user-select: none; transition: transform 0.1s; }
+        .canvas-element:hover { outline: 2px solid #3b82f6; }
+        .canvas-element.active { outline: 2px solid #2563eb; outline-offset: 4px; }
+
+        /* --- 新增动画 CSS --- */
+        
+        /* 1. 向上淡入关键帧 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 2. 悬浮漂浮关键帧 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(1deg); }
+        }
+
+        /* 3. 背景装饰旋转 */
+        @keyframes slowSpin {
+            from { transform: rotate(-2deg); }
+            to { transform: rotate(2deg); }
+        }
+
+        /* 4. 文字流光效果 */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* 应用动画的类 */
+        .animate-fade-up {
+            opacity: 0; /* 初始隐藏 */
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-sway {
+            animation: slowSpin 8s ease-in-out infinite alternate;
+        }
+
+        .text-shimmer {
+            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 50%, #2563eb 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* 延迟工具类 */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans leading-relaxed overflow-x-hidden">
+
+    <div class="min-h-screen flex flex-col transition-opacity duration-500" id="landing-page">
+        
+        <nav class="animate-fade-up bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 group cursor-pointer">
+                <span class="iconify text-blue-600 text-3xl group-hover:scale-110 transition-transform duration-300" data-icon="solar:file-text-bold-duotone"></span>
+                <span class="text-xl font-bold tracking-tight text-slate-800">ResuMaker</span>
+            </div>
+            <div class="flex gap-8 items-center font-medium text-slate-600">
+                <a class="hover:text-blue-600 transition-colors relative group" href="#">
+                    设计模板
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+                </a>
+                <a class="hover:text-blue-600 transition-colors relative group" href="#">
+                    成功案例
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+                </a>
+                <a class="hover:text-blue-600 transition-colors relative group" href="#">
+                    价格
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
+                </a>
+                <button class="bg-blue-600 text-white px-6 py-2.5 rounded-full hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 transition-all active:scale-95" onclick="showEditor()">开始制作</button>
+            </div>
+        </nav>
+
+        <main class="flex-1 max-w-7xl mx-auto px-8 pt-20 pb-16 grid grid-cols-2 gap-12 items-center">
+            
+            <div class="space-y-8">
+                <div class="animate-fade-up delay-100 inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-sm font-semibold border border-blue-100 shadow-sm">
+                    ✨ 2026年最佳简历设计工具
+                </div>
+                
+                <h1 class="animate-fade-up delay-200 text-6xl font-black text-slate-900 leading-[1.1]">
+                    打造令人心动的<br>
+                    <span class="text-shimmer">职业简历</span>
+                </h1>
+                
+                <p class="animate-fade-up delay-300 text-xl text-slate-500 max-w-lg">
+                    不仅仅是一个编辑器。ResuMaker 提供专业的智能布局、精美的设计模板和实时可视化编辑，让你的简历在面试官眼中脱颖而出。
+                </p>
+                
+                <div class="animate-fade-up delay-400 flex gap-4">
+                    <button class="group flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-xl hover:-translate-y-1 hover:shadow-2xl active:scale-95" onclick="showEditor()">
+                        立即免费创建
+                        <span class="iconify group-hover:translate-x-1 transition-transform" data-icon="solar:arrow-right-linear"></span>
+                    </button>
+                    <button class="group bg-white border-2 border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-95">
+                        查看模板库
+                    </button>
+                </div>
+                
+                <div class="animate-fade-up delay-500 flex items-center gap-4 text-sm text-slate-400">
+                    <div class="flex -space-x-3 hover:space-x-1 transition-all duration-300 cursor-pointer">
+                        <img alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white transition-transform hover:scale-110 hover:z-10 relative z-0" src="https://modao.cc/agent-py/media/generated_images/2026-02-05/708864ab7a4e4796bbf17d38c3dfdade.jpg">
+                        <img alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white transition-transform hover:scale-110 hover:z-10 relative z-0" src="https://modao.cc/agent-py/media/generated_images/2026-02-05/dbefc2ab4fb849419f7f53052a1f11ca.jpg">
+                        <img alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-white transition-transform hover:scale-110 hover:z-10 relative z-0" src="https://modao.cc/agent-py/media/generated_images/2026-02-05/e46e07bc1b244e87af2473e708cba020.jpg">
+                    </div>
+                    <span>已有 <strong class="text-slate-700">10,000+</strong> 求职者成功获得 Offer</span>
+                </div>
+            </div>
+
+            <div class="relative animate-fade-up delay-300">
+                <div class="animate-sway bg-gradient-to-tr from-blue-600/10 to-purple-600/10 absolute -inset-4 rounded-[40px] -rotate-2 scale-105"></div>
+                
+                <div class="animate-float relative group perspective-1000">
+                    <img alt="App Preview" class="relative rounded-2xl shadow-2xl border-8 border-white w-full h-[500px] object-cover transition-transform duration-500 group-hover:rotate-1 group-hover:scale-[1.02]" src="https://modao.cc/agent-py/media/generated_images/2026-02-05/eef9113ef5cb4d32bc4a555b87c76a5e.jpg">
+                    
+                    <div class="absolute -left-8 bottom-12 bg-white p-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-3 animate-float" style="animation-delay: -2s;">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600">
+                            <span class="iconify text-xl" data-icon="solar:check-circle-bold"></span>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">面试邀请</div>
+                            <div class="font-bold text-slate-800">Google Inc.</div>
+                        </div>
+                    </div>
+
+                    <div class="absolute -right-4 top-12 bg-white p-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-3 animate-float" style="animation-delay: -4s;">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            <span class="iconify text-xl" data-icon="solar:star-bold"></span>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400">简历评分</div>
+                            <div class="font-bold text-slate-800">98/100 分</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="hidden h-screen flex flex-col overflow-hidden bg-slate-100 transition-opacity duration-300" id="editor-page">
+        <header class="bg-white border-b border-slate-200 px-6 h-16 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-4">
+                <button class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-blue-600 transition-colors" onclick="hideEditor()">
+                    <span class="iconify" data-icon="solar:alt-arrow-left-linear"></span>
+                </button>
+                <div class="h-6 w-px bg-slate-200"></div>
+                <h2 class="font-semibold text-slate-700">我的简历 - 2026版</h2>
+                <span class="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">更新于: 2026-02-05</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 text-slate-600 rounded-lg transition-colors">
+                    <span class="iconify" data-icon="solar:eye-linear"></span>
+                    预览
+                </button>
+                <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm hover:shadow-md transition-all active:scale-95">
+                    <span class="iconify" data-icon="solar:download-minimalistic-linear"></span>
+                    导出 PDF
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden">
+            <aside class="w-20 bg-white border-r border-slate-200 flex flex-col items-center py-6 gap-8 z-10 shadow-sm">
+                <button class="group flex flex-col items-center gap-1 w-full" onclick="addText()">
+                    <div class="w-12 h-12 flex items-center justify-center bg-slate-50 text-slate-600 rounded-xl group-hover:bg-blue-50 group-hover:text-blue-600 transition-all group-hover:scale-110">
+                        <span class="iconify text-2xl" data-icon="solar:text-bold"></span>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 group-hover:text-blue-600 transition-colors">文字</span>
+                </button>
+                <button class="group flex flex-col items-center gap-1 w-full" onclick="triggerImageUpload()">
+                    <div class="w-12 h-12 flex items-center justify-center bg-slate-50 text-slate-600 rounded-xl group-hover:bg-blue-50 group-hover:text-blue-600 transition-all group-hover:scale-110">
+                        <span class="iconify text-2xl" data-icon="solar:gallery-bold"></span>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 group-hover:text-blue-600 transition-colors">图片</span>
+                </button>
+                <button class="group flex flex-col items-center gap-1 w-full" onclick="addShape()">
+                    <div class="w-12 h-12 flex items-center justify-center bg-slate-50 text-slate-600 rounded-xl group-hover:bg-blue-50 group-hover:text-blue-600 transition-all group-hover:scale-110">
+                        <span class="iconify text-2xl" data-icon="solar:box-bold"></span>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 group-hover:text-blue-600 transition-colors">图形</span>
+                </button>
+                <input accept="image/*" class="hidden" id="image-input" onchange="handleImageUpload(event)" type="file">
+                <div class="mt-auto flex flex-col gap-4">
+                    <button class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:rotate-90 transition-transform">
+                        <span class="iconify text-2xl" data-icon="solar:settings-linear"></span>
+                    </button>
+                </div>
+            </aside>
+
+            <main class="flex-1 bg-slate-100 overflow-auto flex justify-center p-12 hide-scrollbar relative" id="main-canvas-area">
+                <div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-full shadow-2xl flex items-center gap-4 z-20 hover:scale-105 transition-transform">
+                    <button class="p-2 hover:bg-slate-100 rounded-full transition-colors" onclick="zoomCanvas(-0.1)">
+                        <span class="iconify text-xl" data-icon="solar:minus-circle-linear"></span>
+                    </button>
+                    <span class="text-sm font-semibold text-slate-600 w-12 text-center select-none" id="zoom-value">80%</span>
+                    <button class="p-2 hover:bg-slate-100 rounded-full transition-colors" onclick="zoomCanvas(0.1)">
+                        <span class="iconify text-xl" data-icon="solar:add-circle-linear"></span>
+                    </button>
+                    <div class="w-px h-4 bg-slate-300 mx-2"></div>
+                    <button class="p-2 hover:bg-slate-100 rounded-full transition-colors" onclick="rotateElement(-45)">
+                        <span class="iconify text-xl" data-icon="solar:re-square-linear"></span>
+                    </button>
+                </div>
+
+                <div class="relative bg-white w-[794px] h-[1123px] canvas-shadow transition-transform duration-200 ease-out origin-top" id="canvas-container" style="transform: scale(0.8);">
+                    <div class="w-full h-full relative overflow-hidden" id="canvas-elements-root">
+                        <div class="canvas-element absolute left-10 top-10 pointer-events-auto group" onclick="selectElement(this)" style="left: 60px; top: 60px;">
+                            <h1 class="text-4xl font-black text-slate-800 tracking-tight outline-none focus:bg-blue-50/50 rounded px-1" contenteditable="true">您的姓名</h1>
+                            <p class="text-blue-600 font-medium text-lg outline-none focus:bg-blue-50/50 rounded px-1" contenteditable="true">求职意向：前端开发专家</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="w-72 bg-white border-l border-slate-200 p-6 flex flex-col gap-8 overflow-y-auto z-10 shadow-sm">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">属性编辑</h3>
+                    
+                    <div class="text-center py-10 transition-opacity" id="empty-state">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="iconify text-3xl text-slate-300" data-icon="solar:magic-stick-3-linear"></span>
+                        </div>
+                        <p class="text-sm text-slate-400">选择画布中的元素<br>开始自定义设计</p>
+                    </div>
+
+                    <div class="hidden space-y-6 animate-fade-up" id="text-controls" style="animation-duration: 0.3s">
+                        <div class="space-y-3">
+                            <label class="text-xs font-bold text-slate-500 flex items-center gap-1">
+                                <span class="iconify" data-icon="solar:text-field-linear"></span> 字体家族
+                            </label>
+                            <select class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                <option>思源黑体</option>
+                                <option>思源宋体</option>
+                                <option>PingFang SC</option>
+                                <option>Roboto</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500">字号</label>
+                                <div class="relative">
+                                    <input class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm" onchange="updateAttr('fontSize', this.value + 'px')" type="number" value="16">
+                                    <span class="absolute right-3 top-2 text-xs text-slate-400">px</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-slate-500">颜色</label>
+                                <div class="flex gap-2 items-center h-[38px] bg-slate-50 border border-slate-200 rounded-lg px-2">
+                                    <input class="w-6 h-6 rounded cursor-pointer border-none bg-transparent p-0" onchange="updateAttr('color', this.value)" type="color">
+                                    <span class="text-xs text-slate-400">选色</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded hover:bg-white hover:shadow-sm hover:text-blue-600 transition-all"><span class="iconify mx-auto" data-icon="solar:text-bold-bold"></span></button>
+                            <button class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded hover:bg-white hover:shadow-sm hover:text-blue-600 transition-all"><span class="iconify mx-auto" data-icon="solar:text-italic-bold"></span></button>
+                            <button class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded hover:bg-white hover:shadow-sm hover:text-blue-600 transition-all"><span class="iconify mx-auto" data-icon="solar:text-underline-bold"></span></button>
+                        </div>
+                    </div>
+
+                    <div class="hidden space-y-6 animate-fade-up" id="shape-controls" style="animation-duration: 0.3s">
+                        <div class="space-y-3">
+                            <label class="text-xs font-bold text-slate-500">填充颜色</label>
+                            <div class="flex gap-2 items-center h-10 bg-slate-50 border border-slate-200 rounded-lg px-2">
+                                <input class="w-full h-8 rounded cursor-pointer bg-transparent" onchange="updateAttr('backgroundColor', this.value)" type="color">
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-xs font-bold text-slate-500 flex justify-between">
+                                圆角 <span class="text-slate-400 font-normal">0px</span>
+                            </label>
+                            <input class="w-full accent-blue-600 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer" oninput="updateAttr('borderRadius', this.value + 'px')" type="range">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-auto border-t border-slate-100 pt-6">
+                    <button class="w-full flex items-center justify-center gap-2 py-3 border-2 border-red-50 text-red-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all font-medium text-sm active:scale-95" onclick="deleteElement()">
+                        <span class="iconify" data-icon="solar:trash-bin-trash-bold"></span>
+                        删除选中元素
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        let currentZoom = 0.8;
+        let selectedElement = null;
+
+        function showEditor() {
+            const landing = document.getElementById('landing-page');
+            const editor = document.getElementById('editor-page');
+            
+            landing.style.opacity = '0';
+            setTimeout(() => {
+                landing.classList.add('hidden');
+                editor.classList.remove('hidden');
+                // 强制重绘以触发 transition
+                setTimeout(() => {
+                    editor.style.opacity = '1';
+                }, 50);
+            }, 500);
+        }
+
+        function hideEditor() {
+            const landing = document.getElementById('landing-page');
+            const editor = document.getElementById('editor-page');
+
+            editor.style.opacity = '0';
+            setTimeout(() => {
+                editor.classList.add('hidden');
+                landing.classList.remove('hidden');
+                setTimeout(() => {
+                    landing.style.opacity = '1';
+                }, 50);
+            }, 300);
+        }
+
+        function zoomCanvas(delta) {
+            currentZoom = Math.min(Math.max(0.3, currentZoom + delta), 1.5);
+            document.getElementById('canvas-container').style.transform = `scale(${currentZoom})`;
+            document.getElementById('zoom-value').innerText = Math.round(currentZoom * 100) + '%';
+        }
+
+        function selectElement(el) {
+            if (selectedElement) selectedElement.classList.remove('active');
+            selectedElement = el;
+            selectedElement.classList.add('active');
+            
+            // 更新属性面板
+            document.getElementById('empty-state').classList.add('hidden');
+            const isText = el.hasAttribute('contenteditable') || el.querySelector('[contenteditable]');
+            const isShape = el.dataset.type === 'shape';
+            
+            document.getElementById('text-controls').classList.toggle('hidden', !isText);
+            document.getElementById('shape-controls').classList.toggle('hidden', !isShape);
+        }
+
+        function addText() {
+            const div = document.createElement('div');
+            div.className = 'canvas-element absolute p-2 min-w-[100px] text-slate-800';
+            div.style.left = '100px';
+            div.style.top = '200px';
+            div.innerHTML = '<div contenteditable="true" class="outline-none">在这里输入新文字...</div>';
+            div.onclick = (e) => {
+                e.stopPropagation();
+                selectElement(div);
+            };
+            makeDraggable(div);
+            document.getElementById('canvas-elements-root').appendChild(div);
+            selectElement(div);
+        }
+
+        function addShape() {
+            const div = document.createElement('div');
+            div.dataset.type = 'shape';
+            div.className = 'canvas-element absolute w-32 h-32 bg-blue-500 rounded-lg';
+            div.style.left = '150px';
+            div.style.top = '300px';
+            div.onclick = (e) => {
+                e.stopPropagation();
+                selectElement(div);
+            };
+            makeDraggable(div);
+            document.getElementById('canvas-elements-root').appendChild(div);
+            selectElement(div);
+        }
+
+        function triggerImageUpload() {
+            document.getElementById('image-input').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'canvas-element absolute w-48 shadow-lg rounded-md';
+                    img.style.left = '100px';
+                    img.style.top = '100px';
+                    img.onclick = (ev) => {
+                        ev.stopPropagation();
+                        selectElement(img);
+                    };
+                    makeDraggable(img);
+                    document.getElementById('canvas-elements-root').appendChild(img);
+                    selectElement(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateAttr(key, value) {
+            if (!selectedElement) return;
+            const target = selectedElement.querySelector('[contenteditable]') || selectedElement;
+            target.style[key] = value;
+        }
+
+        function rotateElement(deg) {
+            if (!selectedElement) return;
+            const currentRotation = selectedElement.dataset.rotation ? parseInt(selectedElement.dataset.rotation) : 0;
+            const newRotation = currentRotation + deg;
+            selectedElement.dataset.rotation = newRotation;
+            selectedElement.style.transform = `rotate(${newRotation}deg)`;
+        }
+
+        function deleteElement() {
+            if (selectedElement) {
+                selectedElement.remove();
+                selectedElement = null;
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.getElementById('text-controls').classList.add('hidden');
+                document.getElementById('shape-controls').classList.add('hidden');
+            }
+        }
+
+        function makeDraggable(el) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            el.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                if (e.target.hasAttribute('contenteditable')) return; 
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                selectElement(el);
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                el.style.top = (el.offsetTop - pos2) + "px";
+                el.style.left = (el.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // 初始化默认引导元素的可拖动性
+        document.querySelectorAll('.canvas-element').forEach(el => makeDraggable(el));
+        
+        // 点击画布空白处取消选中
+        document.getElementById('main-canvas-area')?.addEventListener('click', function(e) {
+            if(e.target.id === 'main-canvas-area') {
+                if(selectedElement) selectedElement.classList.remove('active');
+                selectedElement = null;
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.getElementById('text-controls').classList.add('hidden');
+                document.getElementById('shape-controls').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
