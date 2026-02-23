@@ -17,6 +17,7 @@ description: "定义 ResuFlow 开发规范与架构约定。编写 Vue 组件或
 - UI 库：Element Plus
 - 图形/画布：LogicFlow
 - 工具：pnpm
+- PDF 导出：html2canvas + jspdf
 
 ## 目录组织
 

@@ -5,31 +5,31 @@
       <div class="shape-grid">
         <div class="shape-item" @mousedown="startDrag('rect')" @click="addNode('rect')">
           <div class="icon-box">
-            <svg-icon name="rectangle" style="color: black;"/>
+            <svg-icon name="rectangle" style="color: #333;"/>
           </div>
           <span class="label">矩形</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('circle')" @click="addNode('circle')">
           <div class="icon-box">
-            <svg-icon name="circle" style="color: black;"/>
+            <svg-icon name="circle" style="color: #333;"/>
           </div>
           <span class="label">圆形</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('text')" @click="addNode('text')">
           <div class="icon-box">
-            <svg-icon name="text" style="color: black;"/>
+            <svg-icon name="text" style="color: #333;"/>
           </div>
           <span class="label">文本</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('html')" @click="addNode('html')">
           <div class="icon-box">
-            <svg-icon name="html" style="color: black;"/>
+            <svg-icon name="html" style="color: #333;"/>
           </div>
           <span class="label">HTML</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('line')" @click="addNode('line')">
           <div class="icon-box">
-            <svg-icon name="line" style="color: black;"/>
+            <svg-icon name="line" style="color: #333;"/>
           </div>
           <span class="label">线条</span>
         </div>

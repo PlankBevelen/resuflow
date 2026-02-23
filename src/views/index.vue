@@ -40,26 +40,6 @@
         
         <div class="image-wrapper animate-float">
           <img alt="App Preview" class="app-preview" src="https://modao.cc/agent-py/media/generated_images/2026-02-05/eef9113ef5cb4d32bc4a555b87c76a5e.jpg">
-          
-          <!-- <div class="floating-card card-interview" style="animation-delay: -2s;">
-            <div class="icon-box green">
-              <span class="iconify" data-icon="solar:check-circle-bold"></span>
-            </div>
-            <div>
-              <div class="card-label">面试邀请</div>
-              <div class="card-value">Google Inc.</div>
-            </div>
-          </div> -->
-
-          <!-- <div class="floating-card card-score" style="animation-delay: -4s;">
-            <div class="icon-box blue">
-              <span class="iconify" data-icon="solar:star-bold"></span>
-            </div>
-            <div>
-              <div class="card-label">简历评分</div>
-              <div class="card-value">98/100 分</div>
-            </div>
-          </div> -->
         </div>
       </div>
     </main>
