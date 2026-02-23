@@ -6,6 +6,7 @@
       <div class="main-content">
         <div class="canvas-scroller" ref="scroller">
             <div 
+                id="resume-canvas"
                 ref="container" 
                 class="container" 
                 :style="{ 
@@ -40,7 +41,7 @@ import LeftSidebar from './components/LeftSidebar.vue';
 import RightSidebar from './components/RightSidebar.vue';
 import { onMounted, ref, watch, nextTick } from 'vue';
 import LogicFlow from '@logicflow/core';
-import { DndPanel, SelectionSelect, NodeResize } from '@logicflow/extension';
+import { DndPanel, SelectionSelect, NodeResize, Snapshot } from '@logicflow/extension';
 import { useEditorStore } from '@/stores/editor';
 
 import LineNode from './components/nodes/LineNode';
@@ -60,6 +61,7 @@ onMounted(() => {
   LogicFlow.use(DndPanel);
   LogicFlow.use(SelectionSelect);
   LogicFlow.use(NodeResize);
+  LogicFlow.use(Snapshot);  // 启用快照功能
   
   // Register custom nodes
   lf = new LogicFlow({

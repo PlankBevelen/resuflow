@@ -27,7 +27,11 @@ export const useEditorStore = defineStore('editor', () => {
 
   // 纸张尺寸配置
   const paperSize = ref<'A4' | 'A5'>('A4');
+
+  // 文档标题
+  const title = ref('我的简历 - 2026版');
   
+  // Reduced dimensions to fit screen better at 100% zoom while maintaining aspect ratio
   const paperDimensions = {
     A4: { width: 650, height: 920 }, 
     A5: { width: 460, height: 650 }
@@ -110,6 +114,7 @@ export const useEditorStore = defineStore('editor', () => {
     data,
     paperSize,
     paperDimensions,
-    setPaperSize
+    setPaperSize,
+    title
   };
 });

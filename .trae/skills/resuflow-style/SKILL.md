@@ -30,10 +30,15 @@ description: "定义 ResuFlow 视觉设计系统。用于创建/修改 UI 组件
   - 标题 H1：`clamp(36px, 4vw + 24px, 60px)`
 
 ## 图标（Icons）
-- 统一使用 Iconify（Solar 图标集）
+- 使用 Iconify（Solar 图标集）
   示例：
   ```html
   <span class="iconify" data-icon="solar:box-bold"></span>
+  ```
+- 如果有svg并且更适合用svg, 使用 svg-icon组件
+  示例：
+  ```html
+  <svg-icon name="add" />
   ```
 
 ## 组件（UI Components）
