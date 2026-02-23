@@ -27,10 +27,14 @@ export const useEditorStore = defineStore('editor', () => {
 
   // 纸张尺寸配置
   const paperSize = ref<'A4' | 'A5'>('A4');
+  
   const paperDimensions = {
-    A4: { width: 794, height: 1123 }, // 96 DPI
-    A5: { width: 559, height: 794 }
+    A4: { width: 650, height: 920 }, 
+    A5: { width: 460, height: 650 }
   };
+  
+  // 画布数据（可选）
+  const data = ref<any>(null);
 
   // 切换纸张尺寸
   function setPaperSize(size: 'A4' | 'A5') {
@@ -103,6 +107,7 @@ export const useEditorStore = defineStore('editor', () => {
     resetZoom,
     undo,
     redo,
+    data,
     paperSize,
     paperDimensions,
     setPaperSize

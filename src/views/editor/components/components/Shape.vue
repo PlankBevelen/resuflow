@@ -5,31 +5,31 @@
       <div class="shape-grid">
         <div class="shape-item" @mousedown="startDrag('rect')" @click="addNode('rect')">
           <div class="icon-box">
-            <span class="iconify" data-icon="solar:card-linear"></span>
+            <svg-icon name="rectangle" style="color: black;"/>
           </div>
           <span class="label">矩形</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('circle')" @click="addNode('circle')">
           <div class="icon-box">
-            <span class="iconify" data-icon="solar:circle-linear"></span>
+            <svg-icon name="circle" style="color: black;"/>
           </div>
           <span class="label">圆形</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('text')" @click="addNode('text')">
           <div class="icon-box">
-            <span class="iconify" data-icon="solar:text-field-linear"></span>
+            <svg-icon name="text" style="color: black;"/>
           </div>
           <span class="label">文本</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('html')" @click="addNode('html')">
           <div class="icon-box">
-            <span class="iconify" data-icon="solar:code-linear"></span>
+            <svg-icon name="html" style="color: black;"/>
           </div>
           <span class="label">HTML</span>
         </div>
         <div class="shape-item" @mousedown="startDrag('line')" @click="addNode('line')">
           <div class="icon-box">
-            <span class="iconify" data-icon="solar:minus-linear"></span>
+            <svg-icon name="line" style="color: black;"/>
           </div>
           <span class="label">线条</span>
         </div>
@@ -47,7 +47,7 @@ const startDrag = (type: string) => {
   if (store.lf) {
     store.lf.dnd.startDrag({
       type,
-      text: type === 'text' ? '文本节点' : type === 'html' ? 'HTML节点' : '',
+      text: type === 'text' ? '文本节点' : '',
     });
   } else {
     // Fallback for non-LogicFlow canvas (if we want to support legacy custom canvas via dnd in future)
@@ -65,7 +65,7 @@ const addNode = (type: string) => {
       type,
       x: width / 2,
       y: height / 2,
-      text: type === 'text' ? '文本节点' : type === 'html' ? 'HTML节点' : '',
+      text: type === 'text' ? '文本节点' : '',
     });
   }
 };
@@ -75,7 +75,7 @@ const addNode = (type: string) => {
 .panel {
   width: 280px;
   background: #fff;
-  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
   height: 100%;
   display: flex;
   flex-direction: column;

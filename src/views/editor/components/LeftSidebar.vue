@@ -54,7 +54,7 @@ function handleChoice(type: string) {
   padding: 1.5rem 0;
   gap: 2rem;
   z-index: 10;
-  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  // box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
   position: relative;
 
   .tool-btn {

@@ -17,4 +17,9 @@ app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
 
+// svg-icon 组件
+import 'virtual:svg-icons-register'
+import SvgIcon from '@/components/SvgIcon/index.vue'
+app.component('svg-icon', SvgIcon)
+
 app.mount('#app')

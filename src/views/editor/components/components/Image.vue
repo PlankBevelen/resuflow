@@ -12,8 +12,9 @@
         </div>
       </div>
 
-      <div v-if="preview" class="preview">
+      <div v-if="preview" class="preview" draggable="true" @dragstart="startDrag">
         <img :src="preview" alt="预览" />
+        <div class="drag-tip">拖拽图片到画布</div>
       </div>
     </div>
   </div>
@@ -21,17 +22,16 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useEditorStore } from '@/stores/editor';
 
-const emit = defineEmits<{
-  (e: 'add-image', src: string): void
-}>();
-
+const store = useEditorStore();
 const fileInput = ref<HTMLInputElement | null>(null);
 const preview = ref<string>('');
 
 function triggerUpload() {
   fileInput.value?.click();
 }
+
 function handleUpload(e: Event) {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
@@ -40,10 +40,25 @@ function handleUpload(e: Event) {
   reader.onload = (ev) => {
     const result = ev.target?.result as string;
     preview.value = result;
-    emit('add-image', result);
   };
   reader.readAsDataURL(file);
   input.value = '';
+}
+
+function startDrag(e: DragEvent) {
+    if (store.lf && preview.value) {
+        // LogicFlow 的 DndPanel 插件会拦截 drag 事件
+        // 需要设置一些必要的属性，例如 text (尽管图片节点不需要显示文本)
+        store.lf.dnd.startDrag({
+            type: 'image',
+            text: '', // 某些版本 LogicFlow 可能需要 text 字段
+            properties: {
+                src: preview.value,
+                width: 200,
+                height: 150
+            }
+        });
+    }
 }
 </script>
 
@@ -51,10 +66,14 @@ function handleUpload(e: Event) {
 .panel {
   width: 280px;
   background: #fff;
-  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .panel-body {
   padding: 1.5rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -93,10 +112,37 @@ function handleUpload(e: Event) {
   border-radius: 8px;
   padding: 8px;
   background: #f8fafc;
+  cursor: grab;
+  position: relative;
+  transition: all 0.2s;
+  
+  &:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+  }
 }
 .preview img {
   width: 100%;
   display: block;
   border-radius: 6px;
+  pointer-events: none; /* 防止图片本身的拖拽干扰 */
+}
+.drag-tip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    padding: 4px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.preview:hover .drag-tip {
+    opacity: 1;
 }
 </style>

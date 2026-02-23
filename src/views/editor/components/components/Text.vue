@@ -91,7 +91,7 @@ function toggleUnderline() {
 .panel {
   width: 280px;
   background: #fff;
-  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
 }
 .panel-body {
   padding: 1.5rem;

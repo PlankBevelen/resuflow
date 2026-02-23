@@ -31,6 +31,12 @@
             <el-form-item label="文本内容">
               <el-input v-model="form.text" @change="(v:any)=> updateText(v)" />
             </el-form-item>
+            <el-form-item label="宽度">
+              <el-input v-model.number="form.width" type="number" @change="commitNumber('width', form.width)" />
+            </el-form-item>
+            <el-form-item label="高度">
+              <el-input v-model.number="form.height" type="number" @change="commitNumber('height', form.height)" />
+            </el-form-item>
             <el-form-item label="字体大小">
               <el-input v-model.number="form.fontSize" type="number" @change="commitNumber('fontSize', form.fontSize)" />
             </el-form-item>
@@ -40,18 +46,26 @@
           </template>
 
           <!-- 形状节点 -->
-          <template v-if="['rect','circle','line'].includes(selectedElement.type)">
+          <template v-if="['rect','circle','line','html'].includes(selectedElement.type)">
             <el-form-item label="宽度">
               <el-input v-model.number="form.width" type="number" @change="commitNumber('width', form.width)" />
             </el-form-item>
             <el-form-item label="高度">
               <el-input v-model.number="form.height" type="number" @change="commitNumber('height', form.height)" />
             </el-form-item>
-            <el-form-item label="填充颜色" v-if="selectedElement.type !== 'line'">
+            <el-form-item label="填充颜色" v-if="selectedElement.type !== 'line' && selectedElement.type !== 'html'">
               <input class="color-input" type="color" v-model="form.fill" @change="(e:any)=>updateProperty('fill', e.target.value)" />
             </el-form-item>
-            <el-form-item label="边框颜色">
+            <el-form-item label="边框颜色" v-if="selectedElement.type !== 'html'">
               <input class="color-input" type="color" v-model="form.stroke" @change="(e:any)=>updateProperty('stroke', e.target.value)" />
+            </el-form-item>
+            <el-form-item label="HTML内容" v-if="selectedElement.type === 'html'">
+                <el-input 
+                    type="textarea" 
+                    :rows="6"
+                    v-model="form.html" 
+                    @change="(v:any)=>updateProperty('html', v)" 
+                />
             </el-form-item>
           </template>
         </el-form>
@@ -90,7 +104,8 @@ const form = reactive({
   width: 100,
   height: 80,
   fill: '#ffffff',
-  stroke: '#000000'
+  stroke: '#000000',
+  html: ''
 });
 
 watch(selectedElement, (el) => {
@@ -106,6 +121,7 @@ watch(selectedElement, (el) => {
   form.height = el.properties?.height ?? el.height ?? 80;
   form.fill = el.properties?.fill ?? '#ffffff';
   form.stroke = el.properties?.stroke ?? '#000000';
+  form.html = el.properties?.html || '';
 }, { immediate: true });
 
 const updateProperty = (key: string, value: any) => {
@@ -154,11 +170,20 @@ const deleteElement = () => {
   z-index: 10;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   height: 100%;
+  width: 300px;
 
   .sidebar-content {
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem 1.5rem 0 1.5rem;   
+    
+    /* 隐藏滚动条但保留功能 */
+    &::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
   }
 
   .section-title {
