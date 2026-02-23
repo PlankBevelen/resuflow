@@ -4,9 +4,24 @@
     <div class="content">
       <LeftSidebar />
       <div class="main-content">
-        <div ref="container" class="container" />
-        <div class="toolbox">
-
+        <div class="canvas-scroller">
+            <div 
+                ref="container" 
+                class="container" 
+                :style="{ 
+                    width: store.paperDimensions[store.paperSize].width + 'px', 
+                    height: store.paperDimensions[store.paperSize].height + 'px',
+                    transform: `scale(${store.zoom})`,
+                    transformOrigin: 'center top'
+                }" 
+            />
+        </div>
+        <div class="paper-controls">
+            <span>{{ store.paperDimensions[store.paperSize].width }} x {{ store.paperDimensions[store.paperSize].height }} px</span>
+            <select :value="store.paperSize" @change="(e: any) => store.setPaperSize(e.target.value)">
+                <option value="A4">A4</option>
+                <option value="A5">A5</option>
+            </select>
         </div>
       </div>
       <RightSidebar />
@@ -21,7 +36,9 @@ import RightSidebar from './components/RightSidebar.vue';
 import { onMounted, ref } from 'vue';
 import LogicFlow from '@logicflow/core';
 import { DndPanel, SelectionSelect } from '@logicflow/extension';
+import { useEditorStore } from '@/stores/editor';
 
+const store = useEditorStore();
 let lf: LogicFlow;
 const container = ref<HTMLElement>()
 const selectedNode = ref<any>(null)   // 选中节点
@@ -37,9 +54,11 @@ onMounted(() => {
       visible: false,
     },
     snapline: true,
-    stopMoveGraph: true,
-    stopScrollGraph: true,
-    stopZoomGraph: true,
+    stopMoveGraph: true, // 禁止画布拖拽
+    stopScrollGraph: true, // 禁止滚轮缩放/移动
+    stopZoomGraph: true, // 禁止滚轮缩放
+    width: store.paperDimensions[store.paperSize].width,
+    height: store.paperDimensions[store.paperSize].height,
     keyboard: {
       enabled: true,
       shortcuts: [
@@ -82,6 +101,41 @@ onMounted(() => {
     },
     allowResize: true,
   });
+
+  store.setLogicFlow(lf);
+  lf.render({});
+
+  lf.on('element:click', ({ data }) => {
+    store.selectElement(data.id);
+  });
+
+  lf.on('blank:click', () => {
+    store.selectElement(null);
+  });
+
+  lf.on('node:drag', ({ data }) => {
+      const { width, height } = store.paperDimensions[store.paperSize];
+      const nodeModel = lf.graphModel.getNodeModelById(data.id);
+      
+      if (nodeModel) {
+          let x = nodeModel.x;
+          let y = nodeModel.y;
+          const w = nodeModel.width;
+          const h = nodeModel.height;
+          
+          let modified = false;
+
+          if (x - w / 2 < 0) { x = w / 2; modified = true; }
+          if (x + w / 2 > width) { x = width - w / 2; modified = true; }
+          if (y - h / 2 < 0) { y = h / 2; modified = true; }
+          if (y + h / 2 > height) { y = height - h / 2; modified = true; }
+          
+          if (modified) {
+              nodeModel.x = x;
+              nodeModel.y = y;
+          }
+      }
+  });
 })
 </script>
 
@@ -97,18 +151,53 @@ onMounted(() => {
     overflow: hidden;
     .main-content {
       flex: 1;
-      overflow: auto;
+      overflow: hidden;
       position: relative;
-      .container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        height: 700px;
-        width: 400px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e2e8f0;
+      background-color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      
+      .canvas-scroller {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+
+        .container {
+          background-color: #fff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border: 1px solid #e2e8f0;
+          flex-shrink: 0;
+          transition: width 0.3s, height 0.3s, transform 0.3s;
+          /* 确保 margin-bottom 随缩放变化，避免底部被截断 */
+          margin-bottom: calc(v-bind('store.paperDimensions[store.paperSize].height * (store.zoom - 1)') * 1px);
+        }
+      }
+      
+      .paper-controls {
+          position: fixed;
+          bottom: 20px;
+          right: 320px; /* 紧挨右侧侧边栏 (288px + margin) */
+          background: white;
+          padding: 8px 12px;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          color: #64748b;
+          z-index: 20;
+
+          select {
+              border: 1px solid #e2e8f0;
+              border-radius: 4px;
+              padding: 2px 4px;
+              outline: none;
+              color: #334155;
+          }
       }
     }
   }

@@ -6,12 +6,6 @@
       </div>
       <span class="label">图形</span>
     </button>
-    <button class="tool-btn group" @click="handleChoice('text')">
-      <div class="icon-box">
-        <span class="iconify" data-icon="solar:text-bold"></span>
-      </div>
-      <span class="label">文字</span>
-    </button>
     <button class="tool-btn group" @click="handleChoice('image')">
       <div class="icon-box">
         <span class="iconify" data-icon="solar:gallery-bold"></span>
@@ -60,7 +54,8 @@ function handleChoice(type: string) {
   padding: 1.5rem 0;
   gap: 2rem;
   z-index: 10;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  position: relative;
 
   .tool-btn {
     display: flex;

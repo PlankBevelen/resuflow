@@ -3,29 +3,35 @@
     <div class="panel-body">
       <div class="panel-title">基础图形</div>
       <div class="shape-grid">
-        <div class="shape-item" @mousedown="startDrag('rect')">
+        <div class="shape-item" @mousedown="startDrag('rect')" @click="addNode('rect')">
           <div class="icon-box">
             <span class="iconify" data-icon="solar:card-linear"></span>
           </div>
           <span class="label">矩形</span>
         </div>
-        <div class="shape-item" @mousedown="startDrag('circle')">
+        <div class="shape-item" @mousedown="startDrag('circle')" @click="addNode('circle')">
           <div class="icon-box">
             <span class="iconify" data-icon="solar:circle-linear"></span>
           </div>
           <span class="label">圆形</span>
         </div>
-        <div class="shape-item" @mousedown="startDrag('text')">
+        <div class="shape-item" @mousedown="startDrag('text')" @click="addNode('text')">
           <div class="icon-box">
             <span class="iconify" data-icon="solar:text-field-linear"></span>
           </div>
           <span class="label">文本</span>
         </div>
-        <div class="shape-item" @mousedown="startDrag('html')">
+        <div class="shape-item" @mousedown="startDrag('html')" @click="addNode('html')">
           <div class="icon-box">
             <span class="iconify" data-icon="solar:code-linear"></span>
           </div>
           <span class="label">HTML</span>
+        </div>
+        <div class="shape-item" @mousedown="startDrag('line')" @click="addNode('line')">
+          <div class="icon-box">
+            <span class="iconify" data-icon="solar:minus-linear"></span>
+          </div>
+          <span class="label">线条</span>
         </div>
       </div>
     </div>
@@ -33,19 +39,36 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { useEditorStore } from '@/stores/editor';
 
-const emit = defineEmits<{
-  (e: 'style-change', key: string, value: any): void
-}>();
+const store = useEditorStore();
 
-import LogicFlow from '@logicflow/core';
-import "@logicflow/core/lib/style/index.css";
-import { DndPanel, SelectionSelect } from '@logicflow/extension';
-import '@logicflow/extension/lib/style/index.css'
+const startDrag = (type: string) => {
+  if (store.lf) {
+    store.lf.dnd.startDrag({
+      type,
+      text: type === 'text' ? '文本节点' : type === 'html' ? 'HTML节点' : '',
+    });
+  } else {
+    // Fallback for non-LogicFlow canvas (if we want to support legacy custom canvas via dnd in future)
+    // For now, assume LF is target.
+    console.warn('LogicFlow instance not found in store.');
+  }
+};
 
-
-
+const addNode = (type: string) => {
+  if (store.lf) {
+    const { graphModel } = store.lf;
+    const { width, height } = graphModel;
+    // Add node to the center of the view
+    store.lf.addNode({
+      type,
+      x: width / 2,
+      y: height / 2,
+      text: type === 'text' ? '文本节点' : type === 'html' ? 'HTML节点' : '',
+    });
+  }
+};
 </script>
 
 <style lang="less" scoped>
