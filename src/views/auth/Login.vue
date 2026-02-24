@@ -81,9 +81,9 @@ const handleLogin = async () => {
              userStore.login({
                 id: '1',
                 username: 'admin',
-                email: 'admin@resuflow.com',
+                email: 'admin@Jusort.com',
                 avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                bio: 'ResuFlow 管理员'
+                bio: 'Jusort 管理员'
              });
              ElMessage.success('登录成功');
              router.push('/');

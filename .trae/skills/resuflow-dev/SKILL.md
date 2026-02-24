@@ -1,9 +1,9 @@
 ---
-name: "resuflow-dev"
-description: "定义 ResuFlow 开发规范与架构约定。编写 Vue 组件或业务逻辑时调用。"
+name: "Jusort-dev"
+description: "定义 Jusort 开发规范与架构约定。编写 Vue 组件或业务逻辑时调用。"
 ---
 
-# ResuFlow 开发规范
+# Jusort 开发规范
 
 统一本项目的技术选型、目录组织、组件编写方式与集成策略。
 

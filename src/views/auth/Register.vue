@@ -113,7 +113,7 @@ const handleRegister = async () => {
           username: form.username,
           email: form.email,
           avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-          bio: 'ResuFlow 新用户'
+          bio: 'Jusort 新用户'
         });
         ElMessage.success('注册成功');
         router.push('/');

@@ -1,9 +1,9 @@
 ---
-name: "resuflow-style"
-description: "定义 ResuFlow 视觉设计系统。用于创建/修改 UI 组件或页面时调用，确保风格一致。"
+name: "Jusort-style"
+description: "定义 Jusort 视觉设计系统。用于创建/修改 UI 组件或页面时调用，确保风格一致。"
 ---
 
-# ResuFlow 视觉设计规范
+# Jusort 视觉设计规范
 
 用于在项目中统一颜色、排版、组件样式与动效。创建新页面或组件时必须遵循本规范。
 
