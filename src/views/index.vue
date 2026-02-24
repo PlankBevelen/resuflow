@@ -12,7 +12,7 @@
         </h1>
         
         <p class="hero-desc animate-fade-up delay-300">
-          不仅仅是一个编辑器。ResuMaker 提供专业的智能布局、精美的设计模板和实时可视化编辑，让你的简历在面试官眼中脱颖而出。
+          不仅仅是一个编辑器。Jusort 提供专业的智能布局、精美的设计模板和实时可视化编辑，让你的简历在面试官眼中脱颖而出。
         </p>
         
         <div class="hero-actions animate-fade-up delay-400">

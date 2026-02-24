@@ -1,8 +1,8 @@
 <template>
   <header class="header-nav animate-fade-up">
     <div class="logo-container group" @click="goHome">
-      <span class="iconify logo-icon" data-icon="solar:file-text-bold-duotone"></span>
-      <span class="logo-text">ResuMaker</span>
+      <svg-icon name="icon" class="logo-icon"></svg-icon>
+      <span class="logo-text">Jusort · 简序</span>
     </div>
     <div class="nav-links">
       <a href="#" class="nav-link group">
